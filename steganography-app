@@ -1,0 +1,121 @@
+import { useState } from 'react'
+import { Button } from "/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "/components/ui/card"
+import { Input } from "/components/ui/input"
+import { Label } from "/components/ui/label"
+import { Upload } from "lucide-react"
+
+export default function SteganographyTool() {
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [hiddenText, setHiddenText] = useState<string>('')
+  const [extractedText, setExtractedText] = useState<string>('')
+  const [modifiedImage, setModifiedImage] = useState<string | null>(null)
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setUploadedImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleHideText = () => {
+    // Placeholder function for hiding text
+    // In a real application, this would send the image and text to a backend service
+    setModifiedImage(uploadedImage) // Simulate modification
+    setExtractedText('') // Clear extracted text
+  }
+
+  const handleExtractText = () => {
+    // Placeholder function for extracting text
+    // In a real application, this would send the image to a backend service
+    setExtractedText('This is the hidden text') // Simulate extraction
+  }
+
+  return (
+    <Card className="w-full max-w-3xl mx-auto mt-10">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">Steganography Tool</CardTitle>
+        <CardDescription>Hide and extract text data within images.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <Label htmlFor="image-upload" className="block text-sm font-medium leading-6 text-gray-900">
+            Upload an Image
+          </Label>
+          <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+            <div className="text-center">
+              <Upload className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+              <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                <label
+                  htmlFor="image-upload"
+                  className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                >
+                  <span>Upload a file</span>
+                  <input id="image-upload" name="image-upload" type="file" className="sr-only" onChange={handleImageUpload} />
+                </label>
+                <p className="pl-1">or drag and drop</p>
+              </div>
+              <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+            </div>
+          </div>
+          {uploadedImage && (
+            <div className="mt-4">
+              <img src={uploadedImage} alt="Uploaded" className="max-w-full h-auto rounded-lg" />
+            </div>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="text-input" className="block text-sm font-medium leading-6 text-gray-900">
+            Text to Hide
+          </Label>
+          <div className="mt-2">
+            <Input
+              id="text-input"
+              name="text-input"
+              type="text"
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={hiddenText}
+              onChange={(e) => setHiddenText(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="flex justify-between">
+          <Button onClick={handleHideText} disabled={!uploadedImage || !hiddenText}>
+            Hide Text
+          </Button>
+          <Button onClick={handleExtractText} disabled={!uploadedImage}>
+            Extract Text
+          </Button>
+        </div>
+        {modifiedImage && (
+          <div className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Modified Image</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <img src={modifiedImage} alt="Modified" className="max-w-full h-auto rounded-lg" />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+        {extractedText && (
+          <div className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Extracted Text</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">{extractedText}</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
